@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 
 # ----- USAGE TRACKING ----- #
+
 load_dotenv()
 
 runtime_tracker = {}
@@ -76,6 +77,20 @@ app.on_connect(start_run)
 app.on_disconnect(end_run)
 app.on_shutdown(shutdown_app)
 
+# ----- GLOBAL STYLING ----- #
+            
+ui.button.default_classes("rounded-md bg-blue-grey-6 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-grey-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-grey-6 w-96")
+ui.textarea.default_classes("block rounded-md border-none py-1.5 text-blue-grey-9 shadow-sm placeholder:text-blue-grey-4 focus:ring-2 focus:ring-inset focus:ring-blue-grey-6 sm:text-sm sm:leading-6 w-96")
+ui.input.default_classes("block rounded-md border-0 py-1.5 text-blue-grey-9 shadow-sm placeholder:text-blue-grey-4 focus:ring-2 focus:ring-inset focus:ring-blue-grey-6 sm:text-sm sm:leading-6 w-96")
+ui.number.default_classes("block rounded-md border-0 py-1.5 text-blue-grey-9 shadow-sm placeholder:text-blue-grey-4 focus:ring-2 focus:ring-inset focus:ring-blue-grey-6 sm:text-sm sm:leading-6 w-96")
+ui.label.default_classes("max-w-xl text-base leading-7 text-blue-grey-7 lg:max-w-lg w-96")
+ui.html.default_classes("max-w-xl text-base leading-7 text-blue-grey-7 lg:max-w-lg w-96")
+ui.image.default_classes("max-w-xl text-base leading-7 text-blue-grey-7 lg:max-w-lg w-96")
+ui.markdown.default_classes("max-w-xl text-base leading-7 text-blue-grey-7 lg:max-w-lg w-96")
+ui.select.default_classes("mt-2 block rounded-md border-0 py-1.5 pl-3 pr-10 text-blue-grey-9 focus:ring-2 focus:ring-blue-grey-6 sm:text-sm sm:leading-6 w-96")
+ui.switch.default_classes("relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-grey-6 focus:ring-offset-2 w-96")
+ui.upload.default_classes("mt-2 block rounded-md border-0 py-1.5 text-blue-grey-9 shadow-sm focus:ring-2 focus:ring-inset focus:ring-blue-grey-6 sm:text-sm sm:leading-6 w-96").default_props("color=blue-grey")
+        
 # ----- WEB UI ----- #
 
 @ui.page("/") # uid must be passed as a query parameter
@@ -86,8 +101,8 @@ def page(request: Request, uid: str):
     async def process_image(e: events.UploadEventArguments):
         image = base64.b64encode(e.content.read())
         image_bytes = image.decode()
-        ui.image(f'data:{e.type};base64,{image_bytes}').classes("w-96")
-        with ui.row().classes("w-96"):
+        ui.image(f'data:{e.type};base64,{image_bytes}')
+        with ui.row():
             loading_spinner = ui.spinner()
             generated_text = ui.label("Generating alt text...")
         response = await run.io_bound(generate_alt_text, image_bytes, context_input.value, keywords_input.value, int(char_limit_input.value))
@@ -101,11 +116,12 @@ def page(request: Request, uid: str):
     char_limit_input = ui.number(label="Max characters", value=120, format="%.0f", min=1, max=1000, step=1).classes("w-96")
     
     ui.label("Upload image below:")
-    ui.upload(on_upload=process_image, auto_upload=True).props("accept=png")
+    ui.upload(on_upload=process_image, auto_upload=True).props("accept=image/*")
 
     ui.separator()
 
 # ----- SCRIPT ----- #
+
 def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
     
     # A token is roughly 4 characters
@@ -116,8 +132,6 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
         base_prompt += "The user has provided the following context regarding the image, which you should use to inform the generated alt text: {context}. ".format(context=context)
     if keywords:
         base_prompt += "The user has provided the following keywords which you should optimise the alt text for: {keywords}.".format(keywords=keywords)
-
-    print(base_prompt)
 
     payload = {
     "model": "gpt-4-vision-preview",
@@ -132,7 +146,7 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
             {
             "type": "image_url",
             "image_url": {
-                "url": f"data:image/png;base64,{image_bytes}"
+                "url": f"data:image/*;base64,{image_bytes}"
             }
             }
         ]
