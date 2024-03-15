@@ -83,5 +83,5 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
     except:
         return {"choices": [{"message": {"content": "Error generating alt text, please try again"}}]}
 
-if __name__ == "__main__":
+if __name__ in {"__main__", "__mp_main__"}:
     ui.run()
