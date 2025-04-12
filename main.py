@@ -57,7 +57,7 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
         base_prompt += "The user has provided the following keywords which you should optimise the alt text for: {keywords}.".format(keywords=keywords)
 
     payload = {
-    "model": "gpt-4-vision-preview",
+    "model": "gpt-4o-mini-2024-07-18",
     "messages": [
         {
         "role": "user",
@@ -78,7 +78,7 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
     "max_tokens": est_tokens
     }
     try:
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        response = requests.post(API_URL, headers=headers, json=payload)
         return response.json()
     except:
         return {"choices": [{"message": {"content": "Error generating alt text, please try again"}}]}
