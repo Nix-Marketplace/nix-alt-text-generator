@@ -1,6 +1,6 @@
 # import
 import requests
-from nixgui import ui, events
+from nixgui import ui, run, events
 import base64
 from dotenv import load_dotenv
 import os
