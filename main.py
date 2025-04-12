@@ -57,7 +57,7 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
         base_prompt += "The user has provided the following keywords which you should optimise the alt text for: {keywords}.".format(keywords=keywords)
 
     payload = {
-    "model": "gpt-4o-mini-2024-07-18",
+    "model": "gpt-4o-mini",
     "messages": [
         {
         "role": "user",
