@@ -47,7 +47,7 @@ def main():
 
 def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
     
-    # A token is roughly 4 characters. With new reasoning models, give them 10x the tokens.
+    # A token is roughly 4 characters. With new reasoning models, give them 10x more tokens.
     est_tokens = char_limit * 40
 
     base_prompt = "You are an SEO specialist and you need to write ADA-compliant alt text for this image. What would you write? Return only the alt text, with no additional output. Limit your response to {char_limit} characters. ".format(char_limit=char_limit)
