@@ -30,7 +30,6 @@ def main():
             generated_text = ui.label("Generating alt text...")
         response = await run.io_bound(generate_alt_text, image_bytes, context_input.value, keywords_input.value, int(char_limit_input.value))
         loading_spinner.delete()
-        print(response)
         generated_text.set_text(response["choices"][0]["message"]["content"])
 
     # Create initial UI
