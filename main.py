@@ -30,6 +30,7 @@ def main():
             generated_text = ui.label("Generating alt text...")
         response = await run.io_bound(generate_alt_text, image_bytes, context_input.value, keywords_input.value, int(char_limit_input.value))
         loading_spinner.delete()
+        print(response)
         generated_text.set_text(response["choices"][0]["message"]["content"])
 
     # Create initial UI
@@ -47,8 +48,8 @@ def main():
 
 def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
     
-    # A token is roughly 4 characters
-    est_tokens = char_limit * 4
+    # A token is roughly 4 characters. With new reasoning models, give them 10x the tokens.
+    est_tokens = char_limit * 40
 
     base_prompt = "You are an SEO specialist and you need to write ADA-compliant alt text for this image. What would you write? Return only the alt text, with no additional output. Limit your response to {char_limit} characters. ".format(char_limit=char_limit)
     if context:
@@ -57,7 +58,7 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
         base_prompt += "The user has provided the following keywords which you should optimise the alt text for: {keywords}.".format(keywords=keywords)
 
     payload = {
-    "model": "gpt-4o-mini",
+    "model": "gpt-5-nano",
     "messages": [
         {
         "role": "user",
@@ -75,7 +76,7 @@ def generate_alt_text(image_bytes, context=None, keywords=None, char_limit=120):
         ]
         }
     ],
-    "max_tokens": est_tokens
+    "max_completion_tokens": est_tokens
     }
     try:
         response = requests.post(API_URL, headers=headers, json=payload)
